@@ -230,7 +230,7 @@ class Theme_View extends Theme_View_Core {
 
     $this->thumb_random = $this->ensureoptionsvalue("thumb_random", FALSE);
     $this->thumb_imgalign = $this->ensureoptionsvalue("thumb_imgalign", "top");
-    if (module::is_active("info")):
+    if (module::is_active("info") || module::is_active("rwinfo")):
       $this->thumb_metamode = $this->ensureoptionsvalue("thumb_metamode", "default");
       $this->is_photometa_visible = (!$this->ensureoptionsvalue("hide_photometa", TRUE));
     else:
