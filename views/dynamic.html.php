@@ -30,7 +30,7 @@
 <div class="g-album-grid-container">
 <ul id="g-album-grid">
   <? foreach ($children as $i => $child): ?>
-    <?= $theme->get_thumb_element($child) ?>
+    <?= $theme->get_thumb_element($child, !$theme->hidecontextmenu) ?>
   <? endforeach ?>
 </ul>
 </div>

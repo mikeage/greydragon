@@ -24,7 +24,7 @@
   <ul id="g-album-grid">
 <? if (count($items)): ?>
     <? foreach ($items as $item): ?>
-      <?= $theme->get_thumb_element($item) ?>
+	  <?= $theme->get_thumb_element($item, !$theme->hidecontextmenu) ?>
     <? endforeach ?>
 <? else: ?>
   <li><?= t("No results found for <b>%term</b>", array("term" => $q)) ?></li>
