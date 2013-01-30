@@ -73,7 +73,9 @@
 	  // Added in the latest git
 	  $siblings = $theme->siblings();
 	  for ($i = 1; $i <= $total; $i++):
-		  $_pagelist[$i] = $siblings[$i-1]->url();
+      if (($i < 10) || ($i > ($total_pages - 10)) || (($i > ($current_page - 5)) && ($i < ($current_page + 5)) ) ):
+          $_pagelist[$i] = $siblings[$i-1]->url();
+      endif;
       endfor;
       break;
     default:
