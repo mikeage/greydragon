@@ -70,12 +70,11 @@
       endif;
 
       $total_pages = $total;
-      if (isset($parent)):
-        $siblings = $parent->children();
-        for ($i = 1; $i <= $total; $i++):
-          $_pagelist[$i] = $siblings[$i-1]->url();
-        endfor;
-      endif;
+	  // Added in the latest git
+	  $siblings = $theme->siblings();
+	  for ($i = 1; $i <= $total; $i++):
+		  $_pagelist[$i] = $siblings[$i-1]->url();
+      endfor;
       break;
     default:
       $current_page = 1;
