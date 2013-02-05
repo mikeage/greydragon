@@ -71,7 +71,7 @@
 
       $total_pages = $total;
 	  // Added in the latest git
-	  $siblings = call_user_func_array($siblings_callback[0], $siblings_callback[1]);
+	  $siblings = $theme->siblings();
 	  for ($i = 1; $i <= $total; $i++):
 		  $_pagelist[$i] = $siblings[$i-1]->url();
       endfor;
