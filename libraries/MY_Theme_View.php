@@ -146,7 +146,7 @@ class Theme_View extends Theme_View_Core {
     $this->framepack = $this->read_session_cmdparam("framepack", "gd_framepack", TRUE, $this->ensureoptionsvalue("frame_pack", "greydragon"));
     $this->viewmode  = $this->read_session_cmdparam("viewmode", "gd_viewmode",  TRUE, $this->ensureoptionsvalue("viewmode", "default"));
     $this->is_rtl    = $this->read_session_cmdparam("is_rtl", "gd_rtl", TRUE, "no") == "yes";
-		$this->thumb_ratio = $this->read_session_cmdparam("ratio", "gd_ratio", TRUE, $this->ensureoptionsvalue("thumb_ratio", "photo"));
+    $this->thumb_ratio = $this->read_session_cmdparam("ratio", "gd_ratio", TRUE, $this->ensureoptionsvalue("thumb_ratio", "photo"));
 
     if ($this->ensureoptionsvalue("allow_root_page", FALSE)):
       $_root = $this->read_session_cmdparam("root", "gd_rootpage", TRUE, "yes"); 
@@ -230,7 +230,7 @@ class Theme_View extends Theme_View_Core {
 
     $this->thumb_random = $this->ensureoptionsvalue("thumb_random", FALSE);
     $this->thumb_imgalign = $this->ensureoptionsvalue("thumb_imgalign", "top");
-    if (module::is_active("info")):
+    if (module::is_active("info") || module::is_active("rwinfo")):
       $this->thumb_metamode = $this->ensureoptionsvalue("thumb_metamode", "default");
       $this->is_photometa_visible = (!$this->ensureoptionsvalue("hide_photometa", TRUE));
     else:
@@ -254,7 +254,7 @@ class Theme_View extends Theme_View_Core {
     $this->flex_rows = $this->ensureoptionsvalue("flex_rows", FALSE);
     $this->show_root_desc = !$this->ensureoptionsvalue("hide_root_desc", FALSE);
     $this->root_feed = $this->ensureoptionsvalue("root_feed", "gallery/latest");
-  	$this->root_cyclemode = $this->ensureoptionsvalue("root_cyclemode", "fade");
+    $this->root_cyclemode = $this->ensureoptionsvalue("root_cyclemode", "fade");
     $this->root_delay = $this->ensureoptionsvalue("root_delay", "15");
     $this->root_description = module::get_var("th_greydragon", "root_description");
     if ($this->ensureoptionsvalue("use_permalinks", FALSE)):
@@ -352,42 +352,47 @@ class Theme_View extends Theme_View_Core {
     if (!$item)
       return "";
 
-    if ($item->is_album()):
+    if (method_exists($item, 'is_album') && ($item->is_album())):
       $title = $item->title;
     else:
       switch ($this->title_source):
-	      case "description":
-	        $title = $item->description;
-	        break;
-	      case "no-filename":
-	        $title = $item->title;
-	        $filename = $item->name;
+        case "description":
+          $title = $item->description;
+          break;
+        case "no-filename":
+          $title = $item->title;
+          if (isset($item->name)):
+            $filename = $item->name;
+          else:
+            $filename = '';
+          endif;
 
-	        if (strcasecmp($title, $filename) == 0):
-	          $title = "";
-	        else:
-		        if (defined('PATHINFO_FILENAME')):
-	  	        $filename = pathinfo($filename, PATHINFO_FILENAME);
-		        elseif (strstr($item->filename, '.')):
-		          $filename = substr($filename, 0, strrpos($filename, '.'));
-		        endif; 
+          if (strcasecmp($title, $filename) == 0):
+            $title = "";
+          else:
+            if (defined('PATHINFO_FILENAME')):
+              $filename = pathinfo($filename, PATHINFO_FILENAME);
+            elseif (strstr($item->filename, '.')):
+              $filename = substr($filename, 0, strrpos($filename, '.'));
+            endif; 
 
-		        if (strcasecmp($title, $filename) == 0):
-		          $title = "";
-		        else:
-			        $filename = item::convert_filename_to_title($filename); // Normalize filename to title format 
-		  	      if (strcasecmp($title, $filename) == 0)
-	  	  	      $title = "";
-						endif;
-					endif;
-	        break;
-	      default:
-	        $title = $item->title;
-	        break;
-	    endswitch;
-	  endif;
+            if (strcasecmp($title, $filename) == 0):
+              $title = "";
+            else:
+              $filename = item::convert_filename_to_title($filename); // Normalize filename to title format 
+              if (strcasecmp($title, $filename) == 0)
+                $title = "";
+            endif;
+          endif;
+          break;
+        default:
+          $title = $item->title;
+          break;
+      endswitch;
+    endif;
 
     $title = html::purify($title);
+    $temp = $title;
     if ($allowbbcode):
       $title = $this->bb2html($title, 1);
     else:
@@ -404,23 +409,30 @@ class Theme_View extends Theme_View_Core {
     return $title;
   }
 
-  public function breadcrumb_menu($theme, $parents) {
+  public function breadcrumb_menu($breadcrumbs) {
     $content = "";
     if ($this->breadcrumbs_position == "hide"):
-    elseif ($this->item() and (!empty($parents) or (empty($parents) and $this->breadcrumbs_showinroot))):
+    elseif (!empty($breadcrumbs) or (empty($breadcrumbs) and $this->breadcrumbs_showinroot)):
       $content .= '<ul class="g-breadcrumbs g-' . $this->breadcrumbs_position . '">';
       $i = 0;
-      if (!empty($parents)):
-        foreach ($parents as $parent):
-          $content .= '<li ' . (($i == 0)? " class=\"g-first\"" : null) . '>';
-          $content .= (($i > 0)? " :: " : null );
-          $content .= '<a href="' . $parent->url($parent == $this->item()->parent() ? "show={$this->item()->id}" : null) . '">';
-          $content .= $this->get_item_title($parent, FALSE, $this->visible_title_length);
-          $content .= '</a></li>';
+      if (!empty($breadcrumbs)):
+        foreach ($breadcrumbs as $breadcrumb):
+          $title = $this->get_item_title($breadcrumb, FALSE, $this->visible_title_length);
+          $title = trim($title);
+          if (!empty($title)):
+            $content .= '<li class="';
+            $content .= ($breadcrumb->last) ? 'g-active' : '';
+            $content .= ($breadcrumb->first) ? 'g-first' : '';
+            $content .= '">';
+            $content .= (!$breadcrumb->first) ? ' :: ' : '';
+            $content .= (!$breadcrumb->last) ? '<a href="' . $breadcrumb->url . '">' : '';
+            $content .= $title;
+            $content .= (!$breadcrumb->last) ? '</a>' : '';
+            $content .= '</li>';
+          endif;
           $i++;
         endforeach;
       endif;
-      $content .= '<li class="g-active ' . (($i == 0)? " g-first" : null) . '"> '. (($i > 0)? " :: " : null ) . $this->get_item_title($this->item(), FALSE, $this->visible_title_length) . '</li>';
       $content .= '</ul>';
     endif;
 
@@ -490,7 +502,7 @@ class Theme_View extends Theme_View_Core {
     if ($this->viewmode == "mini"):
       $body_class .= " viewmode-mini";
     endif;
-		$body_class .= " g-sidebar-" . $this->sidebarvisible;
+    $body_class .= " g-sidebar-" . $this->sidebarvisible;
 
     switch ($this->column_count):
       case 5:    
@@ -528,19 +540,19 @@ class Theme_View extends Theme_View_Core {
   }
 
   public function get_thumb_link($item) {
-		if ($item->is_album()):
-		  return "";
-		endif;
+    if ($item->is_album()):
+      return "";
+    endif;
     if (item::viewable($item)):
-   	  if (access::can("view_full", $item)):
-   			$direct_link = $item->file_url();
-   		else:
-   			$direct_link = $item->resize_url();
+      if (access::can("view_full", $item)):
+        $direct_link = $item->file_url();
+      else:
+        $direct_link = $item->resize_url();
       endif;
       return '<a title="' . $this->get_item_title($item) . '" style="display: none;" class="g-sb-preview" rel="g-preview" href="' . $direct_link . '">&nbsp;</a>';
     else:
-  	  return "";
-		endif;
+      return "";
+    endif;
   }
 
   public function get_thumb_element($item, $addcontext = FALSE, $linkonly = FALSE) {
@@ -551,13 +563,19 @@ class Theme_View extends Theme_View_Core {
       endif;
     endif;
 
-    $item_class = $item->is_album() ? "g-album" : "g-photo";
+    if ($item->is_album()):
+      $item_class = "g-album";
+    elseif ($item->is_movie()):
+      $item_class = "g-movie";
+    else:
+      $item_class = "g-photo";
+    endif;
     $content = '<li id="g-item-id-' . $item->id . '" class="g-item ' . $item_class . ' ' . $this->thumb_type;
     if ($item->is_album()):
-    	$_thumb_descmode = $this->thumb_descmode_a;
-		else:
-    	$_thumb_descmode = $this->thumb_descmode;
-		endif;
+      $_thumb_descmode = $this->thumb_descmode_a;
+    else:
+      $_thumb_descmode = $this->thumb_descmode;
+    endif;
 
     $content .= ($_thumb_descmode == "bottom")? " g-expanded" : " g-default";
 
@@ -591,23 +609,24 @@ class Theme_View extends Theme_View_Core {
     endif;
 
     $content .= ($is_portrait)? " g-portrait" : " g-landscape";
-    $content .= '">' . $this->thumb_top($item);
+    $content .= '">';
 
     $content .= '<div class="g-thumbslide">';
-		$thumb_content = '<p class="g-thumbcrop">';
+    $content .= $this->thumb_top($item);
+    $thumb_content = '<p class="g-thumbcrop">';
 
-		$use_direct_link = (($this->disablephotopage) && (!$item->is_album())); 
-		$class_name = "g-thumblink";
-		if ($use_direct_link):
-			$class_name .= ' g-sb-preview" rel="g-preview';
-		  if (access::can("view_full", $item)):
-				$direct_link = $item->file_url();
-			else:
-				$direct_link = $item->resize_url();
-			endif;
-		else:
-			$direct_link = $item->url();
-		endif;
+    $use_direct_link = (($this->disablephotopage) && (!$item->is_album())); 
+    $class_name = "g-thumblink";
+    if ($use_direct_link):
+      $class_name .= ' g-sb-preview" rel="g-preview';
+      if (access::can("view_full", $item)):
+        $direct_link = $item->file_url();
+      else:
+        $direct_link = $item->resize_url();
+      endif;
+    else:
+      $direct_link = $item->url();
+    endif;
 
     if ($use_direct_link && module::is_active("exif") && module::info("exif")): 
       $thumb_content .= '<a class="g-meta-exif-link g-dialog-link" href="' . url::site("exif/show/{$item->id}") . '" title="' . t("Photo details")->for_html_attr() . '">&nbsp;</a>';
@@ -616,19 +635,19 @@ class Theme_View extends Theme_View_Core {
     $thumb_content .= '<a title="' . $this->get_item_title($item) . '" '. $_shift . ' class="' . $class_name . '" href="' . $direct_link . '">';
     if ($thumb_item->has_thumb()):
       if (($this->crop_factor > 1) && ($this->thumb_imgalign == "fit")):
-      	if ($thumb_item->thumb_height > $this->_thumb_size_y):
-      		if ($is_portrait):
-      			$_max = $this->_thumb_size_y;
-      		else:
-	      	  $_max = intval($this->_thumb_size_x * ($this->_thumb_size_y / $thumb_item->thumb_height));
-	      	endif;
-	      else:
-	        $_max = $this->_thumb_size_x;
+        if ($thumb_item->thumb_height > $this->_thumb_size_y):
+          if ($is_portrait):
+            $_max = $this->_thumb_size_y;
+          else:
+            $_max = intval($this->_thumb_size_x * ($this->_thumb_size_y / $thumb_item->thumb_height));
+          endif;
+        else:
+          $_max = $this->_thumb_size_x;
         endif;
-      	$_max = min($thumb_item->thumb_width, $_max);
-        $thumb_content .= $thumb_item->thumb_img(array(), $_max);
+        $_max = min($thumb_item->thumb_width, $_max);
+        $thumb_content .= $thumb_item->thumb_img(array("class" => "g-thumbnail"), $_max);
       else:
-        $thumb_content .= $thumb_item->thumb_img();
+        $thumb_content .= $thumb_item->thumb_img(array("class" => "g-thumbnail"));
       endif;
     else:
       $thumb_content .= '<img title="No Image" alt="No Image" src="' . $this->url("images/missing-img.png") . '"/>';
@@ -638,7 +657,7 @@ class Theme_View extends Theme_View_Core {
     if (($this->thumb_metamode != "hide") and ($_thumb_descmode == "overlay_bottom")):
       $_thumb_metamode = "merged";
     else:
-	    $_thumb_metamode = $this->thumb_metamode;
+      $_thumb_metamode = $this->thumb_metamode;
     endif;
 
     if (($_thumb_descmode == "overlay") or ($_thumb_descmode == "overlay_top") or ($_thumb_descmode == "overlay_bottom")):
@@ -674,16 +693,20 @@ class Theme_View extends Theme_View_Core {
       $thumb_content .= (stripos($_text, '<li>'))? $_text : null;
     endif;
 
-		try {
-	    $view = new View("frame.html");
-	    $view->thumb_content = $thumb_content;
-	    $content .= $view;
+    try {
+      if (Kohana::find_file('views', "frame.html", FALSE)):
+        $view = new View("frame.html"); 
+        $view->thumb_content = $thumb_content;
+        $content .= $view;
+      else:
+        $content .= $thumb_content;
+      endif;
     } catch (Exception $e) {
-			$content .= $thumb_content;
+      $content .= $thumb_content;
     }
 
-    $content .= '</div>';
     $content .= $this->thumb_bottom($item);
+    $content .= '</div>';
     $content .= '</li>';
 
     return $content;
@@ -753,8 +776,8 @@ class Theme_View extends Theme_View_Core {
     if (module::get_var("gallery", "show_credits")):
       $version_string = SafeString::of_safe_html('Gallery ' . gallery::VERSION);
       return '<ul id="g-credits">'
-        . '<li class="g-branding"><a id="g-gallery-logo" href="http://gallery.menalto.com" title="' . $version_string . '"></a>'
-        . '<a id="g-theme-logo" href="http://codex.gallery2.org/Gallery3:Themes:greydragon" target="_blank" title="' . $this->themename . ' ' . $this->themeversion . ' (' . $this->colorpack . ')"></a></li>'
+        . '<li class="g-branding"><a id="g-gallery-logo" href="http://galleryproject.org" title="' . $version_string . '"></a>'
+        . '<a id="g-theme-logo" href="http://codex.galleryproject.org/Gallery3:Themes:greydragon" target="_blank" title="' . $this->themename . ' ' . $this->themeversion . ' (' . $this->colorpack . ')"></a></li>'
         . gallery_theme::credits()
         . '</ul>';
     else:
@@ -806,7 +829,7 @@ class Theme_View extends Theme_View_Core {
       $newtext = str_replace("&gt;", ">", $newtext); 
       $newtext = str_replace("&quot;", "\"", $newtext); 
     else:
-	    // Replace any html brackets with HTML Entities to prevent executing HTML or script 
+      // Replace any html brackets with HTML Entities to prevent executing HTML or script 
       $newtext = str_replace("<", "&lt;", $text); 
       $newtext = str_replace(">", "&gt;", $newtext); 
       $newtext = str_replace("&amp;quot;", "&quot;", $newtext); 
@@ -834,69 +857,69 @@ class Theme_View extends Theme_View_Core {
     curl_close($curl);
  
     if ($contents):
-    	return $contents;
+      return $contents;
     else:
-    	return FALSE;
+      return FALSE;
     endif;
   }
 
   function valid_url($str) {
-  	return ( ! preg_match('/^(http|https|ftp):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i', $str)) ? FALSE : TRUE;
+    return ( ! preg_match('/^(http|https|ftp):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i', $str)) ? FALSE : TRUE;
   }
 
   function get_slideshow_list($limit = 10) {
-		if( ! function_exists('simplexml_load_string'))
-			throw new Kohana_User_Exception('Feed Error', 'SimpleXML must be installed!');
+    if( ! function_exists('simplexml_load_string'))
+      throw new Kohana_User_Exception('Feed Error', 'SimpleXML must be installed!');
 
-		$items = array();
-		$host = 'http://' . $_SERVER['SERVER_NAME'] . '/';
+    $items = array();
+    $host = 'http://' . $_SERVER['SERVER_NAME'] . '/';
 
-		$feed_url = $this->root_feed;
-	  if (!$this->valid_url($feed_url)):
-	    $feed_url = $host . $feed_url;
-	  endif;
+    $feed_url = $this->root_feed;
+    if (!$this->valid_url($feed_url)):
+      $feed_url = $host . $feed_url;
+    endif;
 
-	  $use_file_load = ($this->valid_url($feed_url)) || is_file($feed_url); 
+    $use_file_load = ($this->valid_url($feed_url)) || is_file($feed_url); 
 
-	  $er = error_reporting(0);
-		// Try to get feed directly
-		try {
-	    try {
-	      if ($use_file_load):
-	    		$feed = simplexml_load_file($feed_url, 'SimpleXMLElement', LIBXML_NOCDATA);
-	      else:
-	    		$feed = simplexml_load_string($feed_url, 'SimpleXMLElement', LIBXML_NOCDATA);
-	      endif;
-	    } catch (Exception $e) {
-			}
-	  } catch (Exception $e) {
-	  };
+    $er = error_reporting(0);
+    // Try to get feed directly
+    try {
+      try {
+        if ($use_file_load):
+          $feed = simplexml_load_file($feed_url, 'SimpleXMLElement', LIBXML_NOCDATA);
+        else:
+          $feed = simplexml_load_string($feed_url, 'SimpleXMLElement', LIBXML_NOCDATA);
+        endif;
+      } catch (Exception $e) {
+      }
+    } catch (Exception $e) {
+    };
 
-		if (isset($feed) && ($feed)):
-			// Direct load worked fine
-		else:
-			// Direct load did not work, let's try CURL (URL file-access is disabled ?)
-	    try {
+    if (isset($feed) && ($feed)):
+      // Direct load worked fine
+    else:
+      // Direct load did not work, let's try CURL (URL file-access is disabled ?)
+      try {
         $file = $this->curl_get_file_contents($feed_url);
-      	if ($file):
-        	$feed = simplexml_load_string($file, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOBLANKS);
-      	endif;
-    	} catch (Exception $e) {
-    	};
-		endif;
-  	error_reporting($er);
+        if ($file):
+          $feed = simplexml_load_string($file, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOBLANKS);
+        endif;
+      } catch (Exception $e) {
+      };
+    endif;
+    error_reporting($er);
 
-  	if (isset($feed) && ($feed)):
-			$feed = isset($feed->channel) ? $feed->channel->xpath("//media:content[contains(@url, 'var/resizes')]") : array();
-			$i = 0;
-			foreach ($feed as $item):
-				if ($limit > 0 AND $i++ === $limit)
-					break;
-    		$items[] = (array) $item;
-			endforeach;
-		endif;
-		return $items;
-	}
+    if (isset($feed) && ($feed)):
+      $feed = isset($feed->channel) ? $feed->channel->xpath("//media:content[contains(@url, 'var/resizes')]") : array();
+      $i = 0;
+      foreach ($feed as $item):
+        if ($limit > 0 AND $i++ === $limit)
+          break;
+        $items[] = (array) $item;
+      endforeach;
+    endif;
+    return $items;
+  }
 }
 
 ?>

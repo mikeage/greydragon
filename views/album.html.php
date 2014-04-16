@@ -2,7 +2,7 @@
 /**
  * Grey Dragon Theme - a custom theme for Gallery 3
  * This theme was designed and built by Serguei Dosyukov, whose blog you will find at http://blog.dragonsoft.us
- * Copyright (C) 2009-2012 Serguei Dosyukov
+ * Copyright (C) 2009-2014 Serguei Dosyukov
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
@@ -31,25 +31,25 @@
 <ul id="g-album-grid">
 <?
   if (count($children)):
-		$siblings = $item->children();
-		if (($theme->disablephotopage) && (count($siblings) > count($children))):
-			$j = 0;
-			foreach ($siblings as $i => $sibling):
-				if ($sibling->rand_key == $children[$j]->rand_key):
-					echo $theme->get_thumb_element($sibling, !$theme->hidecontextmenu);
-					if ($j + 1 < count($children)):
-						$j++;
-					endif;
-				else:
-					echo $theme->get_thumb_link($sibling);
-				endif;
-			endforeach;
-		else:         
-			foreach ($children as $i => $child):
-				echo $theme->get_thumb_element($child, !$theme->hidecontextmenu);
-			endforeach;
-		endif;
-	else:
+    $siblings = $item->children();
+    if (($theme->disablephotopage) && (count($siblings) > count($children))):
+      $j = 0;
+      foreach ($siblings as $i => $sibling):
+        if ($sibling->rand_key == $children[$j]->rand_key):
+          echo $theme->get_thumb_element($sibling, !$theme->hidecontextmenu);
+          if ($j + 1 < count($children)):
+            $j++;
+          endif;
+        else:
+          echo $theme->get_thumb_link($sibling);
+        endif;
+      endforeach;
+    else:         
+      foreach ($children as $i => $child):
+        echo $theme->get_thumb_element($child, !$theme->hidecontextmenu);
+      endforeach;
+    endif;
+  else:
     if ($user->admin || access::can("add", $item)):
       $addurl = url::site("uploader/index/$item->id"); ?>
       <li><?= t("There aren't any photos here yet! <a %attrs>Add some</a>.", array("attrs" => html::mark_clean("href=\"$addurl\" class=\"g-dialog-link\""))) ?></li>

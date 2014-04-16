@@ -44,7 +44,7 @@
 
 .g-item .g-context-menu { position: absolute; margin: 0; padding: 0; top: 20px; left: 198px; width: 14px; height: 14px; background-position: -178px -144px; z-index: 4; } 
 .g-item .g-context-menu li { width: 100%; padding: 0; margin: 0; text-indent: -9999px; }
-.g-item .g-context-menu>li>a { font-size: 0em; }
+.g-item .g-context-menu>li>a { font-size: 0em; display: none; }
 .g-item .g-context-menu:hover { top: 4px; left: 16px; top: 16px; width: 200px; height: auto; z-index: 102; }
 
 .g-extended .g-item .g-context-menu { left: 300px; }

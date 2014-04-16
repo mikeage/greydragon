@@ -9,7 +9,9 @@
 body.g-extended.g-column-4 #g-header,
 body.g-extended.g-column-4 #g-footer,
 body.g-extended.g-column-4 #g-main,
-body.g-extended.g-column-4 #g-main-in { min-width: 1302px; }
+body.g-extended.g-column-4 #g-main-in,
+body.g-extended.g-column-4 #g-column-top,
+body.g-extended.g-column-4 #g-column-bottom { min-width: 1302px; }
 
 /* layous.css - Extended Layout - 4 columns+sidebar ~~*/
 body.g-extended.g-column-4.g-sidebar-right #g-header,

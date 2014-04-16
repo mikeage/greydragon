@@ -29,7 +29,6 @@ a:hover { text-decoration: underline; }
 #g-gallery-logo { background-image: url('../images/gallery.png'); }
 #g-theme-logo { background: transparent url('../images/colorpack.png') no-repeat; }
 
-
 /* styles.css - Album Layout ~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #g-column-top .g-toolbar h1, #g-column-bottom .g-toolbar h1 { border: none; }
@@ -52,8 +51,7 @@ div.g-resize .g-description { color: #000; background: #FFFFFF; filter:alpha(opa
 div.g-resize .g-description.g-align-top { border-bottom: 1px solid #ccc; }
 div.g-resize .g-description.g-align-bottom { border-top: 1px solid #ccc; }
 div.g-resize .g-more { border: 1px solid #ccc; background: #FFFFFF; filter:alpha(opacity=85); opacity:.85; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=85)"; }
-
-.g-movie  { border: 1px solid #ccc; padding: 5px; }
+div#g-movie .g-movie { border: 1px solid #ccc; padding: 5px; }
 
 /* styles.css - Sidebar Blocks : Common ~~~~~~~~~~~~~~*/
 

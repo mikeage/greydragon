@@ -2,7 +2,7 @@
 /**
  * Grey Dragon Theme - a custom theme for Gallery 3
  * This theme was designed and built by Serguei Dosyukov, whose blog you will find at http://blog.dragonsoft.us
- * Copyright (C) 2009-2012 Serguei Dosyukov
+ * Copyright (C) 2009-2014 Serguei Dosyukov
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
@@ -22,30 +22,30 @@
     $link_url .= $theme->permalinks["enter"];
   endif;
   if ($theme->show_root_desc):
-  	if ($theme->root_description):
-  		$root_text = $theme->root_description;
-  	elseif (isset($item)):
-	    $root_text = $item->description;
-  	endif;
-	  if ($root_text): 
-	    ?><div id="g-rootpage-quote"><?= $theme->bb2html($root_text, 1); ?></div><?
-	  endif; 
-	endif;
+    if ($theme->root_description):
+      $root_text = $theme->root_description;
+    elseif (isset($item)):
+      $root_text = $item->description;
+    endif;
+    if ($root_text): 
+      ?><div id="g-rootpage-quote"><?= $theme->bb2html($root_text, 1); ?></div><?
+    endif; 
+  endif;
 
-	$slideshow_list = $theme->get_slideshow_list();
-	$first = TRUE;
+  $slideshow_list = $theme->get_slideshow_list();
+  $first = TRUE;
 ?>
 <div id="g-rootpage-roll"<?= ($root_text)? null : ' class="g-full"'; ?>>
-	<span><a href="<?= $link_url ?>"><?= t("Click to Enter") ?></a></span>
-	<div id="g-rootpage-slideshow">
-  	<? foreach ($slideshow_list as $entry): ?>
-  		<? $attr = $entry["@attributes"]; ?>
-	  <div class="slider-item" style="width: <?= $attr['width']; ?>px; height: <?= $attr["height"]; ?>px; display: <?= ($first)? "block" : "none"; ?>; position: absolute; z-index: 10; opacity: <?= ($first)? "1" : "0"; ?>;">
-  	  <a href="<?= $link_url; ?>"><img width="<?= $attr["width"]; ?>" height="<?= $attr["height"]; ?>" alt="" src="<?= $attr["url"]; ?>" border="0"/></a>
-	  </div>
-		  <? $first = FALSE; ?>
-	  <? endforeach ?>
-	</div>	
+  <span><a href="<?= $link_url ?>"><?= t("Click to Enter") ?></a></span>
+  <div id="g-rootpage-slideshow">
+    <? foreach ($slideshow_list as $entry): ?>
+      <? $attr = $entry["@attributes"]; ?>
+    <div class="slider-item" style="width: <?= $attr['width']; ?>px; height: <?= $attr["height"]; ?>px; display: <?= ($first)? "block" : "none"; ?>; position: absolute; z-index: 10; opacity: <?= ($first)? "1" : "0"; ?>;">
+      <a href="<?= $link_url; ?>"><img width="<?= $attr["width"]; ?>" height="<?= $attr["height"]; ?>" alt="" src="<?= $attr["url"]; ?>" /></a>
+    </div>
+      <? $first = FALSE; ?>
+    <? endforeach ?>
+  </div>  
 </div>
 <? if (count($slideshow_list) > 0): ?>
 <script type="text/javascript">

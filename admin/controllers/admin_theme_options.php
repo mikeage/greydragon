@@ -127,11 +127,11 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
   }
 
   protected function isCurlInstalled() {
-  	if (in_array('curl', get_loaded_extensions())) {
-  		return true;
-  	}	else {
-  		return false;
-  	}
+    if (in_array('curl', get_loaded_extensions())) {
+      return true;
+    } else {
+      return false;
+    }
   } 
 
   protected function get_edit_form_admin() {
@@ -245,7 +245,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
 
     $group = $form->group("edit_theme")->label(t("General Settings"));
     $group->hidden("g_auto_delay")
-    	->value(module::get_var("th_greydragon", "auto_delay", 30));
+      ->value(module::get_var("th_greydragon", "auto_delay", 30));
     $group->input("row_count")
       ->label(t("Rows per Album Page"))
       ->rules("required|valid_digit")
@@ -315,18 +315,12 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
     $group->input("custom_css_path")
       ->label(t("File Name of custom.css or equivalent"))
       ->value(module::get_var("th_greydragon", "custom_css_path"));
-    $group->input("thumb_quality")
-      ->label(t("Thumb Image Quallity (in %)"))
-      ->rules("required|valid_digit")
-      ->error_messages("required", t("You must enter a number"))
-      ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("th_greydragon", "thumb_quality", 100));
     $group->input("resize_quality")
       ->label(t("Resized Image Quallity (in %)"))
       ->rules("required|valid_digit")
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
-      ->value(module::get_var("th_greydragon", "resize_quality", 100));
+      ->value(module::get_var("gallery", "image_quality", 100));
     $group->input("visible_title_length")
       ->label(t("Visible Title Length"))
       ->rules("required|valid_digit")
@@ -447,14 +441,12 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       ->value(module::get_var("th_greydragon", "root_feed", "/gallery3/index.php/rss/feed/gallery/latest"));
     $group->dropdown("root_cyclemode")
       ->label(t("Cycle Effect (Default: Fade)"))
-      ->options(array("fade" => t("Fade"), "fadeZoom" => t("Fade Zoom"), "blindX" => t("Blind X"), "blindY" => t("Blind Y"), 
-          "blindZ" => t("Blind Z"), "cover" => t("Cover"), "curtainX" => t("Curtain X"), "curtainY" => t("Curtain Y"),
-          "growX" => t("Grow X"), "growY" => t("Grow Y"), "none" => t("None"), "scrollUp" => t("Scroll Up"),
-          "scrollDown" => t("Scroll Down"), "scrollLeft" => t("Scroll Left"), "scrollRight" => t("Scroll Right"), 
-          "scrollHorz" => t("Scroll Horz"), "scrollVert" => t("Scroll Vert"), "shuffle" => t("Shuffle"), 
-          "slideX" => t("Slide X"), "slideY" => t("Slide Y"), "toss" => t("Toss"), "turnUp" => t("Turn Up"), 
-          "turnDown" => t("Turn Down"), "turnLeft" => t("Turn Left"), "turnRight" => t("Turn Right"), "uncover" => t("Uncover"),
-          "wipe" => t("Wipe"), "zoom" => t("Zoom")))
+      ->options(array("fade" => t("Fade"), "fadeout" => t("Fade Out"), "fadeZoom" => t("Fade Zoom"), "blindX" => t("Blind X"), "blindY" => t("Blind Y"), 
+          "blindZ" => t("Blind Z"), "cover" => t("Cover"), "curtainX" => t("Curtain X"), "curtainY" => t("Curtain Y"), "growX" => t("Grow X"),
+          "growY" => t("Grow Y"), "none" => t("None"), "scrollUp" => t("Scroll Up"), "scrollDown" => t("Scroll Down"), "scrollLeft" => t("Scroll Left"),
+          "scrollRight" => t("Scroll Right"), "scrollHorz" => t("Scroll Horz"), "scrollVert" => t("Scroll Vert"), "shuffle" => t("Shuffle"),      
+          "slideX" => t("Slide X"), "slideY" => t("Slide Y"), "toss" => t("Toss"), "turnUp" => t("Turn Up"), "turnDown" => t("Turn Down"),
+          "turnLeft" => t("Turn Left"), "turnRight" => t("Turn Right"), "uncover" => t("Uncover"), "wipe" => t("Wipe"), "zoom" => t("Zoom")))
       ->selected(module::get_var("th_greydragon", "root_cyclemode"));
     $group->input("root_delay")
       ->label(t("Slideshow Delay (Default: 15)"))
@@ -511,7 +503,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
     $help .= '<legend>' . t("Help") . '</legend><ul>';
     $help .= '<li><h3>' . t("Prerequisites") . '</h3>
       <p><b>' . t("REQUIREMENTS NEED TO BE MET FOR THE THEME TO FUNCTION PROPERLY.") . '</b><br />
-      	' . t("Please refer to the section on the left.") . '
+        ' . t("Please refer to the section on the left.") . '
       </li>';
 
     $help .= '<li><h3>' . t("General Settings") . '</h3>
@@ -520,11 +512,11 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       <p>Default G3 logo can be replaced with your own by providing <b>Alternate Logo Image</b>. Recommended logo size
         is within 300x80px. If you need bigger space for your logo, CSS would have to be adjusted. Otherwise, Logo could be
         suppressed altogether by providing <b>Header Text</b> to replace it. <b>Footer Text</b> would be simply placed next
-        to Site\'s credits.
+        to Site's credits.
       <p><b>Copyright Message</b> can be placed in the right top corner of the footer.
       <p>Important feature of the theme is a support for Color Packs which is managed by <b>Selected Color Pack</b> Option.
       <b>Color Pack</b> allows changing colors, styles, theme for the pages. By default 6 color packs are included,
-        but it could be easily extended. Visit Theme\'s Download page for additional information.
+        but it could be easily extended. Visit Theme's Download page for additional information.
       <b>Frame Pack</b> allows change Frames used for Thumbs in album pages.") . '
       </li>';
 
@@ -549,24 +541,24 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       <p>Block web crawlers from indexing your Gallery with <b>Disallow Search Engine Indexing</b> Option.") . '
       </li>';
     $help .= '<li><h3>' . t("Advanced Options - Album page - Thumbs") . '</h3>
-      ' . t("<p>Options in this section adjust how Photo\'s Thumb images are displayed.
+      ' . t("<p>Options in this section adjust how Photo's Thumb images are displayed.
       <p><b>Aspect Ratio</b> specifies layout/size of the thumb. Setting should be used with understanding that some
         information may be out of visible area (crop). When switching to/from <b>Actual Size</b>, it is recommended to rebuild
         thumbs so that proper settings are used for thumb resize logic (see Maintenance section below). Combined with
         <b>Expanded Aspect Ratio (300px wide)</b> you can switch between 200px and 300px wide thumb images.
-      <p><b>Title Display Mode</b> and <b>Meta Data Display Mode</b> allows changing how Item\'s caption and Meta Data is
+      <p><b>Title Display Mode</b> and <b>Meta Data Display Mode</b> allows changing how Item's caption and Meta Data is
         displayed. And selecting <b>Merge with Title</b> would place meta data with the Title.
       <p>Randomize your thumbs by enabling <b>Randomize Thumb Image</b> (Please use with caution as it does introduce extra
         load for database.).") . '
       </li>';
     $help .= '<li><h3>' . t("Advanced Options - Photo Page") . '</h3>
       ' . t("<p>Options in this section adjust how individual Photo are presented to the viewer.
-      <p>With <b>ShadowBox Mode</b>, theme\'s logic could be adjusted in how Slideshow module is integrated.
+      <p>With <b>ShadowBox Mode</b>, theme's logic could be adjusted in how Slideshow module is integrated.
       <br />As with Title in Photo Thumbs, <b>Description Display Mode</b> changes how Photo Description is displayed.
       <br />You can choose to <b>Keep Thumb Nav Block on the side</b> of the Photo when Page is displayed with bottom aligned
         or hidden Sidebar.
       <br />And if metadata (owner/clicks/etc.) is unnecessary, it could be removed with <b>Hide Item Meta Data</b>.
-      <p>Theme allows use of BBCode/HTML in item\'s descriptions, to enable it select <b>Allow BBCode/HTML in Descriptions</b>.") . '
+      <p>Theme allows use of BBCode/HTML in item's descriptions, to enable it select <b>Allow BBCode/HTML in Descriptions</b>.") . '
       </li>';
     $help .= '<li><h3>' . t("Advanced Options - Root Page") . '</h3>
       ' . t("<p>Special option which allows adding special root/landing page with slideshow utilizing specified <b>Slideshow RSS Feed
@@ -579,7 +571,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         Description</b> you can overwrite it.") . '
       </li>';
     $help .= '<li><h3>' . t("Sidebar Options") . '</h3>
-      ' . t("<p>If Block\'s header is not desired, it could be removed using <b>Hide Block Header</b>.
+      ' . t("<p>If Block's header is not desired, it could be removed using <b>Hide Block Header</b>.
       <p>Sidebar visibility could be limited to individual Photo pages with
       <b>Show Sidebar for Albums Only</b>.
       <p>When sidebar is visible it can be placed on the left or right of the 
@@ -622,6 +614,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
 
     module::clear_var("th_greydragon", "blendpagetrans");
     module::clear_var("th_greydragon", "last_update");
+    module::clear_var("th_greydragon", "thumb_quality");
   }
 
   protected function reset_theme() {
@@ -673,12 +666,15 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         $photo_descmode = $form->edit_theme_adv_photo->photo_descmode->value;
         $photo_popupbox = $form->edit_theme_adv_photo->photo_popupbox->value;
         $resize_quality = $form->edit_theme_adv_main->resize_quality->value;
-        $thumb_quality  = $form->edit_theme_adv_main->thumb_quality->value;
 
         if ($build_resize):
           graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
           graphics::add_rule("gallery", "resize", "gallery_graphics::resize",
-            array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO), $resize_quality);
+            array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO), 100);
+        endif;
+
+        if (module::get_var("gallery", "image_quality") != $resize_quality):
+          module::set_var("gallery", "image_quality", $resize_quality);
         endif;
 
         if (module::get_var("gallery", "resize_size") != $resize_size):
@@ -707,7 +703,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         if ($build_thumbs):
           graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
           graphics::add_rule("gallery", "thumb", "gallery_graphics::resize",
-            array("width" => $thumb_size, "height" => $thumb_size, "master" => $rule), $thumb_quality);
+            array("width" => $thumb_size, "height" => $thumb_size, "master" => $rule), 100);
         endif;
 
         if (module::get_var("gallery", "thumb_size") != $thumb_size):
@@ -747,9 +743,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         $this->save_item_state("breadcrumbs_showinroot",$form->edit_theme_adv_main->breadcrumbs_showinroot->value, TRUE);
         $this->save_item_state("custom_css_path",       $form->edit_theme_adv_main->custom_css_path->value != "", $form->edit_theme_adv_main->custom_css_path->value);
         $this->save_item_state("disable_seosupport",    $form->edit_theme_adv_main->disable_seosupport->value, TRUE);
-        $this->save_item_state("desc_allowbbcode", 			$form->edit_theme_adv_main->desc_allowbbcode->value, TRUE);
-        $this->save_item_state("resize_quality",        $resize_quality != 100, $resize_quality);
-        $this->save_item_state("thumb_quality",         $thumb_quality != 100,  $thumb_quality);
+        $this->save_item_state("desc_allowbbcode",      $form->edit_theme_adv_main->desc_allowbbcode->value, TRUE);
         module::set_var("gallery", "visible_title_length", $form->edit_theme_adv_main->visible_title_length->value);
         $this->save_item_state("title_source",          $form->edit_theme_adv_main->title_source->value != "default", $form->edit_theme_adv_main->title_source->value);
         $this->save_item_state("use_permalinks",        $form->edit_theme_adv_main->use_permalinks->value, TRUE);
@@ -813,7 +807,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         $this->save_item_state("sidebar_allowed",   $sidebar_allowed != "any",   $sidebar_allowed);
         $this->save_item_state("sidebar_visible",   $sidebar_visible != "right", $sidebar_visible);
 
-        $this->save_item_state("last_update",   		TRUE, time());
+        $this->save_item_state("last_update",       TRUE, time());
 
         module::event("theme_edit_form_completed", $form);
 

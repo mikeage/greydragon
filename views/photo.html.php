@@ -2,7 +2,7 @@
 /**
  * Grey Dragon Theme - a custom theme for Gallery 3
  * This theme was designed and built by Serguei Dosyukov, whose blog you will find at http://blog.dragonsoft.us
- * Copyright (C) 2009-2012 Serguei Dosyukov
+ * Copyright (C) 2009-2014 Serguei Dosyukov
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
@@ -56,7 +56,12 @@
   <div id="g-photo">
     <?= $theme->resize_top($item) ?>
     <? $_resizewidth = $item->resize_width;
-       $siblings = $item->parent()->children(); ?>
+       if (isset($theme->dynamic_siblings)) {
+         $siblings = $theme->dynamic_siblings;
+       } else {
+         $siblings = $item->parent()->children(); 
+       }
+    ?>
     <div class="g-resize" style="margin-left: -<?= intval($_resizewidth / 2); ?>px; ">
     <? $script  = "<script type=\"text/javascript\">\n";
        $script .= "$(document).ready(function() {\n";
@@ -66,10 +71,10 @@
            <a style="<?= ($siblings[$i]->rand_key == $item->rand_key)? "display: static;" : "display: none;"; ?>" title="<?= $theme->get_item_title($item); ?>" <?= ($include_single)? "class=\"g-sb-preview\"" : "target=_blank;"; ?> <?= ($include_list)? "rel=\"g-preview\"" : null; ?> href="<?= (access::can("view_full", $item))? $item->file_url() : $item->resize_url(); ?>">
            <?= $item->resize_img(array("id" => "g-item-id-{$item->id}", "class" => "g-resize", "alt" => $_title)) ?>
            </a>
-      <?  if ($i < count($siblings) - 1):
+      <?  if (($i < count($siblings) - 1) && (!$siblings[$i+1]->is_album())):
             $script  .= "    var image_preload_n = new Image();\n    image_preload_n.src = \"" . $siblings[$i+1]->resize_url() . "\";\n"; 
           endif;
-          if ($i > 0):
+          if (($i > 0) && (!$siblings[$i-1]->is_album())):
             $script  .= "    var image_preload_p = new Image();\n    image_preload_p.src = \"" . $siblings[$i-1]->resize_url() . "\";\n"; 
           endif;
         else:

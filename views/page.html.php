@@ -2,7 +2,7 @@
 /**
  * Grey Dragon Theme - a custom theme for Gallery 3
  * This theme was designed and built by Serguei Dosyukov, whose blog you will find at http://blog.dragonsoft.us
- * Copyright (C) 2009-2012 Serguei Dosyukov
+ * Copyright (C) 2009-2014 Serguei Dosyukov
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
@@ -16,7 +16,6 @@
  * the Free Software Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 ?>
-
 <!DOCTYPE html >
 <? $theme->load_sessioninfo(); ?>
 <html <?= $theme->html_attributes() ?> xml:lang="en" lang="en" <?= ($theme->is_rtl)? "dir=rtl" : null; ?> >
@@ -31,10 +30,8 @@
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
   endif;
 ?>
-<!-- <?= $theme->themename ?> v.<?= $theme->themeversion ?> (<?= $theme->colorpack ?> : <?= $theme->framepack ?>) - Copyright (c) 2009-2012 Serguei Dosyukov - All Rights Reserved -->
-<!-- <?= $theme->page_subtype ?> -->
+<!-- <?= $theme->themename ?> v.<?= $theme->themeversion ?> (<?= $theme->colorpack ?> : <?= $theme->framepack ?>) - Copyright (c) 2009-2014 Serguei Dosyukov - All Rights Reserved -->
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <? $theme->start_combining("script,css") ?>
 <? if ($page_title): ?>
@@ -49,11 +46,11 @@
 <?   endif ?>
 <? endif ?>
 <title><?= $_title ?></title>
+<meta name="title" content="<?= $_title ?>" /> 
 <? if ($theme->disable_seosupport): ?>
 <meta name="robots" content="noindex, nofollow, noarchive" />
 <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noodp, noimageindex, notranslate" />
 <meta name="slurp" content="noindex, nofollow, noarchive, nosnippet, noodp, noydir" />
-<meta name="msnbot" content="noindex, nofollow, noarchive, nosnippet, noodp" />
 <meta name="teoma" content="noindex, nofollow, noarchive" />
 <? endif; ?>
 
@@ -76,17 +73,20 @@
 <? if ($theme->appletouchicon): ?>
 <link rel="apple-touch-icon" href="<?= $theme->appletouchicon; ?>"/>
 <? endif; ?>
-<?= $theme->script("json2-min.js"); ?>
-<?= $theme->script("jquery.js"); ?>
-<?= $theme->script("jquery.form.js") ?>
-<?= $theme->script("jquery-ui.js") ?>
+
+<?= $theme->script("jquery.min.js"); ?>
+<?= $theme->script("jquery.json.min.js"); ?>
+<?= $theme->script("jquery.form.custom.js"); ?>
+<?= $theme->script("jquery-ui.min.js"); ?>
+
 <?= $theme->script("gallery.common.js") ?>
 <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
 <script type="text/javascript">
   var MSG_CANCEL = <?= t('Cancel')->for_js() ?>;
 </script>
 
-<?= $theme->script("gallery.dialog.js"); ?>
+<?= $theme->script("gallery.ajax.custom.js") ?>
+<?= $theme->script("gallery.dialog.custom.js"); ?>
 
 <? /* These are page specific but they get combined */ ?>
 <? if ($theme->page_subtype == "photo"): ?>
@@ -148,11 +148,11 @@
 
 <? if ($theme->loginmenu_position == "header"): ?>
 <?=  $theme->user_menu() ?>
-<? endif ?>
-<? if (empty($parents)): ?>
-<?= $theme->breadcrumb_menu($theme, null); ?>
+<? endif; ?>
+<? if (empty($breadcrumbs)): ?>
+<?= $theme->breadcrumb_menu(null); ?>
 <? else: ?>
-<?= $theme->breadcrumb_menu($theme, $parents); ?>
+<?= $theme->breadcrumb_menu($breadcrumbs); ?>
 <? endif; ?>
 <?= $theme->custom_header(); ?>
 </div>

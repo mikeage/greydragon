@@ -2,7 +2,7 @@
 /**
  * Grey Dragon Theme - a custom theme for Gallery 3
  * This theme was designed and built by Serguei Dosyukov, whose blog you will find at http://blog.dragonsoft.us
- * Copyright (C) 2009-2012 Serguei Dosyukov
+ * Copyright (C) 2009-2014 Serguei Dosyukov
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
@@ -46,43 +46,65 @@
 <?
   $_pagelist = array();
 
-  switch ($page_type) {
-    case "collection":
-      if (isset($item)):
-        $parent = $item->parent();
+  // dynamic albums support - tag_albums module
+  if (isset($theme->dynamic_siblings)):
+    $current_page = $position;
+    $i = 1;
+    $total_pages = count($theme->dynamic_siblings);
+    foreach ($theme->dynamic_siblings as $one_sibling):
+      if ($page_type == "item"):
+        $_pagelist[$i] = url::site("tag_albums/show/" . $one_sibling->id . "/" . $tag_id . "/" . $album_id . "/" . urlencode($one_sibling->name));
       endif;
-      $current_page = $page;
-      $total_pages = $max_pages;
-      // Prepare page url list
-      for ($i = 1; $i <= $total_pages; $i++):
-        $_pagelist[$i] = url::site(url::merge(array("page" => $i)));
-      endfor;
-      break;
-    case "item":
-      if (isset($item)):
-        $parent = $item->parent();
-      endif;
-
-      if (isset($position)):
-        $current_page = $position; 
-      else:
-        $current_page = 1;
-      endif;
-
-      $total_pages = $total;
-      if (isset($parent)):
-        $siblings = $parent->children();
-        for ($i = 1; $i <= $total; $i++):
-          $_pagelist[$i] = $siblings[$i-1]->url();
+      $i++;
+    endforeach;
+  else:
+    switch ($page_type):
+      case "collection":
+        if (isset($item)):
+          $parent = $item->parent();
+        endif;
+        $current_page = $page;
+        $total_pages = $max_pages;
+        // Prepare page url list
+        for ($i = 1; $i <= $total_pages; $i++):
+          $_pagelist[$i] = url::site(url::merge(array("page" => $i)));
         endfor;
-      endif;
-      break;
-    default:
-      $current_page = 1;
-      $total_pages = 1;
-      $_pagelist[1] = url::site();
-      break;
-  }
+        break;
+      case "item":
+        if (isset($first_page_url)): // Good item collection
+          if (isset($item)):
+            $parent = $item->parent();
+          endif;
+  
+          if (isset($position)):
+            $current_page = $position; 
+          else:
+            $current_page = 1;
+          endif;
+
+          $total_pages = $total;
+          if (isset($parent)):
+            $siblings = $parent->children();
+            for ($i = 1; $i <= $total; $i++):
+              $sibling = $siblings[$i-1];
+              if (method_exists($sibling, 'url')):
+                $_pagelist[$i] = $sibling->url();
+              endif;
+            endfor;
+          endif;
+        else:   // "Bad" item collection - photo from tag based collection
+          $total_pages = 1;
+          $current_page = 1;
+        endif;
+        break;
+
+      default:
+        $current_page = 1;
+        $total_pages = 1;
+        $_pagelist[1] = url::site();
+        break;
+    endswitch;
+  endif;
 
   if ($total_pages <= 1):
     $pagination_msg = "&nbsp;";
@@ -157,7 +179,6 @@
     endif;
   endif; 
 ?>
-
 <ul class="g-paginator">
   <li class="g-pagination"><?= $pagination_msg ?></li>   
   <li class="g-navigation">
@@ -173,8 +194,9 @@
     <span class="ui-icon ui-icon-prev-d">&nbsp;</span>
   <? endif ?>
 
-  <? if (isset($parent)): ?>
-    <a title="<?= t("up") ?>" id="g-navi-parent" href="<?= $parent->url("show={$item->id}"); ?>"><span class="ui-icon ui-icon-parent">&nbsp;</span></a>
+  <? if (count($theme->breadcrumbs) > 1): ?>
+    <? end($theme->breadcrumbs); ?>
+    <a title="<?= t("up") ?>" id="g-navi-parent" href="<?= prev($theme->breadcrumbs)->url; ?>"><span class="ui-icon ui-icon-parent">&nbsp;</span></a>
   <? else: ?>
     <span class="ui-icon ui-icon-parent-d">&nbsp;</span>
   <? endif ?>

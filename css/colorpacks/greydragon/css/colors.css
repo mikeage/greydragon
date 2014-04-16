@@ -53,8 +53,7 @@ div.g-resize .g-description { color: #fff; background: #1E1E1E; filter:alpha(opa
 div.g-resize .g-description.g-align-top { border-bottom: 1px solid #999; }
 div.g-resize .g-description.g-align-bottom { border-top: 1px solid #999; }
 div.g-resize .g-more { border: 1px solid #999; background: #1E1E1E; filter:alpha(opacity=85); opacity:.85; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=85)"; }
-
-.g-movie  { border: 1px solid #888; padding: 5px; background: #555; }
+div#g-movie .g-movie { border: 1px solid #888; padding: 5px; background: #555; }
 
 /* styles.css - Sidebar Blocks : Common ~~~~~~~~~~~~~~*/
 
