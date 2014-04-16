@@ -96,6 +96,11 @@
 <? endif ?>
 
 <?= $theme->head() ?>
+<script type="text/javascript" src="/common/javascript.js"></script>
+<link rel="openid.server" href="http://www.myopenid.com/server" />
+<link rel="openid.delegate" href="http://mikeage.myopenid.com/" />
+<link rel="stylesheet" href="/common/layoutscreen.mikeage.css" type="text/css" />
+<link rel="stylesheet" href="/common/bluegray2.mikeage.css" type="text/css" title="Default" /> 
 
 <? // Theme specific CSS/JS goes last so that it can override module CSS/JS ?>
 <?= $theme->theme_js_inject(); ?>
@@ -119,6 +124,9 @@
      $item = item::root();
    endif; ?>
 <body <?= $theme->body_attributes() ?><?= ($theme->show_root_page)? ' id="g-rootpage"' : null; ?> <?= $theme->get_bodyclass(); ?>>
+<? include ('/var/www/common/logosmall.php'); ?>
+<? include ('/var/www/common/navigation.php'); ?>
+<div id="mikeage-content" class="content mikeagecss">
 <?= $theme->page_top() ?>                               
 <?= $theme->site_status() ?>
 <? if (((!$user->guest) or ($theme->show_guest_menu)) and ($theme->mainmenu_position == "bar")): ?>
@@ -255,5 +263,8 @@
 <?= $theme->custom_footer(); ?>
 </div>
 <?= $theme->page_bottom() ?>
+</div>
+<? include ('/var/www/common/sitemapmenu.php'); ?>
+<? include ('/var/www/common/footer.php'); ?>
 </body>
 </html>
