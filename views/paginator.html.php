@@ -71,33 +71,28 @@
         endfor;
         break;
       case "item":
-        if (isset($first_page_url)): // Good item collection
-          if (isset($item)):
-            $parent = $item->parent();
-          endif;
-  
-          if (isset($position)):
-            $current_page = $position; 
-          else:
-            $current_page = 1;
-          endif;
+        if (isset($item)):
+          $parent = $item->parent();
+        endif;
 
-          $total_pages = $total;
-          if (isset($parent)):
-            $siblings = $parent->children();
-            for ($i = 1; $i <= $total; $i++):
-              $sibling = $siblings[$i-1];
-              if (method_exists($sibling, 'url')):
-                $_pagelist[$i] = $sibling->url();
-              endif;
-            endfor;
-          endif;
-        else:   // "Bad" item collection - photo from tag based collection
-          $total_pages = 1;
+        if (isset($position)):
+          $current_page = $position; 
+        else:
           $current_page = 1;
         endif;
-        break;
 
+        $total_pages = $total;
+        $siblings = $theme->siblings();
+        for ($i = 1; $i <= $total; $i++):
+          if (($i <= 10) || ($i >= ($total_pages - 10)) || (($i >= ($current_page - 5)) && ($i <= ($current_page + 5)) ) ):
+            $sibling = $siblings[$i-1];
+            if (method_exists($sibling, 'url')):
+              $_pagelist[$i] = $sibling->url();
+            endif;
+          endif;
+        endfor;
+        break;
+      break;
       default:
         $current_page = 1;
         $total_pages = 1;
